@@ -65,9 +65,9 @@
   /* METRIC CARDS */
   /* FORECAST TABLE */
   .fc-table { border-collapse: collapse; margin-bottom: 20px; font-family: 'Aller', sans-serif; table-layout: fixed; width: 100%; }
-  .fc-table col.c-region { width: 29%; }
+  .fc-table col.c-region { width: 31%; }
   .fc-table col.c-y26 { width: 15%; }
-  .fc-table col.c-d26 { width: 20%; }
+  .fc-table col.c-d26 { width: 18%; }
   .fc-table col.c-y27 { width: 16%; }
   .fc-table col.c-d27 { width: 20%; }
   .fc-table th, .fc-table td { text-align: center; padding: 5px 3px; font-size: 13px; }
@@ -219,6 +219,26 @@
   /* DIVIDER */
   hr.sec { border: none; border-top: 1px solid #e0e0e0; margin: 18px 0; }
 
+  /* MANUAL BUTTON + MODAL */
+  .manual-row { display: flex; justify-content: flex-end; margin-top: 20px; }
+  .manual-btn { font-family: var(--font); font-weight: 300; font-size: 12px; padding: 6px 14px; border: 1px solid var(--gr3); border-radius: 6px; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
+  .manual-btn:hover { background: var(--gr4); }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 1000; }
+  .modal-overlay.open { display: flex; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-card { background: #fff; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.18); max-width: 560px; width: 100%; padding: 22px 26px 24px; position: relative; }
+  .modal-close { position: absolute; top: 15px; right: 17px; cursor: pointer; color: #b0b0b0; background: none; border: none; font-size: 22px; line-height: 1; padding: 0; }
+  .modal-close:hover { color: #555; }
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--g); margin-bottom: 3px; }
+  .modal-sub { font-size: 12px; font-weight: 300; color: #969696; margin-bottom: 18px; }
+  .modal-steps { list-style: none; margin: 0; padding: 0; }
+  .modal-step { display: grid; grid-template-columns: 22px 1fr; gap: 8px; font-size: 13px; color: #444; line-height: 1.5; margin-bottom: 14px; }
+  .modal-step:last-of-type { margin-bottom: 4px; }
+  .modal-step .num { font-weight: 700; color: #111; }
+  .modal-step b { font-weight: 700; color: #111; }
+  .modal-step .hl { font-weight: 700; color: var(--g); }
+  .modal-divider { border: none; border-top: 1px solid #e6e6e6; margin: 14px 0; }
+  .modal-note { font-size: 12px; font-style: italic; color: #969696; line-height: 1.5; }
+
   /* RESPONSIVE */
   @media (max-width: 600px) {
     .metric-grid { grid-template-columns: repeat(3, 1fr); }
@@ -238,8 +258,8 @@
     <div class="wh-meta">
       <span class="wh-tag">Información Pública</span>
       <span class="wh-sub">Periodicidad: semestral + updates</span>
-      <span class="wh-sub">Última actualización: Jul 2026</span>
-      <span class="wh-sub">Fuente: IMF</span>
+      <span class="wh-sub">Última actualización: 8 Jul 2026</span>
+      <span class="wh-sub">Fuente: www.imf.org</span>
     </div>
   </div>
 
@@ -770,8 +790,29 @@
     </div>
   </div>
 
+  <div class="manual-row">
+    <button class="manual-btn" onclick="openManual()">Manual de actualización</button>
+  </div>
+
 </div><!-- end w-inner -->
 </div><!-- end wrapper -->
+
+<!-- MANUAL DE ACTUALIZACIÓN MODAL -->
+<div class="modal-overlay" id="manual-modal" onclick="if(event.target===this)closeManual()">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="manual-title">
+    <button class="modal-close" onclick="closeManual()" aria-label="Cerrar">&times;</button>
+    <div class="modal-title" id="manual-title">Manual de actualización</div>
+    <div class="modal-sub">Cómo agregar el semestre más reciente al tracker</div>
+    <ol class="modal-steps">
+      <li class="modal-step"><span class="num">1.</span><span><b>Entrar</b> a la página del WEO en <span class="hl">imf.org</span> y descargar el <b>PDF</b> del último "World Economic Outlook Release".</span></li>
+      <li class="modal-step"><span class="num">2.</span><span><b>Guardar</b> el PDF en: <b>W:\4. Informes\-- Informes Trimestrales\FMI - WEO</b></span></li>
+      <li class="modal-step"><span class="num">3.</span><span><b>Adjuntar</b> ese PDF acá, en este chat, para que se agregue el nuevo semestre al tracker.</span></li>
+      <li class="modal-step"><span class="num">4.</span><span><b>Descargar</b> el HTML actualizado y guardarlo en: <b>G:\Unidades compartidas\MFO-Dashboards\Monitores\Estrategia</b></span></li>
+    </ol>
+    <hr class="modal-divider">
+    <div class="modal-note">El PDF debe corresponder al semestre más reciente publicado por el FMI.</div>
+  </div>
+</div>
 
 <script>
 // ---- Regional data ----
@@ -1070,6 +1111,11 @@ function renderEvolution() {
   });
 }
 function initEvolution() { renderEvolution(); }
+
+// Manual de actualización modal
+function openManual() { document.getElementById('manual-modal').classList.add('open'); }
+function closeManual() { document.getElementById('manual-modal').classList.remove('open'); }
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeManual(); });
 
 // With Chart.js responsive turned off, re-render on window resize so the charts
 // re-fit the (possibly resized) container. Debounced; only when Evolution is visible.
